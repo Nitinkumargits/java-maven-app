@@ -16,7 +16,7 @@ pipeline {
     stage('init') {
         steps {
             script{
-                gv = load 'script.groovy'
+                gv = load 'java-maven-build/script.groovy'
             }
         
         }
@@ -43,16 +43,16 @@ pipeline {
             message "Select environment to deploy to :"
             ok "Done"
             parameters {
-                choice(name: "ENVIRONMENT-ONE", choices: ["dev", "staging", "production"], description: "Select environment to deploy to")
-                choice(name: "ENVIRONMENT-TWO", choices: ["dev", "staging", "production"], description: "Select environment to deploy to")
+                choice(name: "ENVIRONMENT_ONE", choices: ["dev", "staging", "production"], description: "Select environment to deploy to")
+                choice(name: "ENVIRONMENT_TWO", choices: ["dev", "staging", "production"], description: "Select environment to deploy to")
             }
         }
 
         steps{
             script{
                 gv.deployApp()
-                echo "Deploying version ${params.VERSION} to ${params.ENVIRONMENT-ONE} environment"
-                echo "Deploying version ${params.VERSION} to ${params.ENVIRONMENT-TWO} environment"
+                echo "Deploying version ${params.VERSION} to ${params.ENVIRONMENT_ONE} environment"
+                echo "Deploying version ${params.VERSION} to ${params.ENVIRONMENT_TWO} environment"
             }
         }
     }

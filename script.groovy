@@ -12,9 +12,12 @@ def testApp() {
 def buildImage() {
     echo "building the docker image..."
     withCredentials([usernamePassword(credentialsId: 'nitinkdocker18', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-        sh 'docker build -t nitinkdocker18/demo-app:3.0 .'
-        sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
-        sh 'docker push nitinkdocker18/demo-app:3.0'
+        
+        sh """
+        docker build -t nitinkdocker18/demo-app:${params.VERSION} .
+        echo \$PASSWORD | docker login -u \$USERNAME --password-stdin
+        docker push nitinkdocker18/demo-app:${params.VERSION}
+        """
     }
 } 
 
