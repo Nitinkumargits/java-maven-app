@@ -10,14 +10,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                script {
-                    echo "Checking out code..."
-                    checkout scm
-                }
-            }
-        }
 
         stage('init') {
             steps {
@@ -31,12 +23,17 @@ pipeline {
                 script {
                     echo 'Incrementing version...'
 
-                    sh '''
-                    #!/bin/bash
-                    mvn build-helper:parse-version versions:set \
-                    -DnewVersion=${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion} \
-                    versions:commit
-                    '''
+                    def version = sh(
+                        script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout",
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Current version: ${version}"
+
+                    def newVersion = "${version.split('-')[0]}-${BUILD_NUMBER}"
+                    env.IMAGE_NAME = newVersion
+
+                    echo "New version: ${env.IMAGE_NAME}"
                 }
             }
         }
