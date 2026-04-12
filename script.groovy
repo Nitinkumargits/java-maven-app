@@ -11,10 +11,10 @@ def testApp() {
 
 def buildImage() {
     echo "building the docker image..."
-    withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-        sh 'docker build -t nitinkdocker18/demo-app:2.0 .'
-        sh "echo $PASS | docker login -u $USER --password-stdin"
-        sh 'docker push nitinkdocker18/demo-app:2.0'
+    withCredentials([usernamePassword(credentialsId: 'nitinkdocker18', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+        sh 'docker build -t nitinkdocker18/demo-app:3.0 .'
+        sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
+        sh 'docker push nitinkdocker18/demo-app:3.0'
     }
 } 
 
