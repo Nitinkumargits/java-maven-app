@@ -4,32 +4,38 @@ pipeline {
     agent any
     
     tools {
-        maven "maven-3.6"
-    }
-    parameters {
-        choice(name: "VERSION", choices: ["1.0.0", "1.0.1", "1.0.2"], description: "Select version to deploy")
-        booleanParam(name: "executeTests", defaultValue: true, description: "Execute tests before deployment")
+        maven "Maven"
     }
 
  stages{
 
-    stage('init') {
+    stage('Build jar') {
         steps {
             script{
-                gv = load 'script.groovy'
+            echo "Building the application..."
+            sh 'mvn package'
             }
+                
         
         }
     }
-    stage('Build') {
+    stage('Build Image') {
         steps {
             script{
-                gv.buildJar()
-                gv.buildImage()
-            }
+                echo "building the docker image..."
+                withCredentials([usernamePassword(credentialsId: 'nitinkdocker18', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
         
+                sh """
+                docker build -t nitinkdocker18/demo-app:3.0 .
+                echo \$PASSWORD | docker login -u \$USERNAME --password-stdin
+                docker push nitinkdocker18/demo-app:3.0
+                """
+         
+                }
+            }
         }
     }
+    
     stage('Test') {
         steps {
             script{
@@ -39,20 +45,12 @@ pipeline {
         }
     }
     stage('Deploy') {
-        input{
-            message "Select environment to deploy to :"
-            ok "Done"
-            parameters {
-                choice(name: "ENVIRONMENT_ONE", choices: ["dev", "staging", "production"], description: "Select environment to deploy to")
-                choice(name: "ENVIRONMENT_TWO", choices: ["dev", "staging", "production"], description: "Select environment to deploy to")
-            }
-        }
-
+        
         steps{
             script{
-                gv.deployApp()
-                echo "Deploying version ${params.VERSION} to ${params.ENVIRONMENT_ONE} environment"
-                echo "Deploying version ${params.VERSION} to ${params.ENVIRONMENT_TWO} environment"
+            
+            echo 'deploying the application...'
+            
             }
         }
     }
