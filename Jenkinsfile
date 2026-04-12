@@ -1,4 +1,4 @@
-
+def gv
 
 pipeline {
     agent any
@@ -12,28 +12,46 @@ pipeline {
     }
 
  stages{
+
+    stage('init') {
+        steps {
+            script{
+                gv = load 'script.groovy'
+            }
+        
+        }
+    }
     stage('Build') {
         steps {
-            echo "Building version ${params.VERSION}"
+            script{
+                gv.buildJar()
+                gv.buildImage()
+            }
         
         }
     }
     stage('Test') {
-        when {
-            expression {
-                params.executeTests
-            }
-        }
         steps {
-            echo "Running tests for version ${params.VERSION}"
+            script{
+                gv.testApp()
+            }
         
         }
     }
     stage('Deploy') {
-        steps {
-            echo "Deploying the application"
-            echo "Deploying version ${params.VERSION}"
-        
+        input{
+            message "Select environment to deploy to :"
+            ok "Done"
+            parameters {
+                choice(name: "ENVIRONMENT", choices: ["dev", "staging", "production"], description: "Select environment to deploy to")
+            }
+        }
+
+        steps{
+            script{
+                gv.deployApp()
+                echo "Deploying version ${params.VERSION} to ${params.ENVIRONMENT} environment"
+            }
         }
     }
  }
