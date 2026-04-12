@@ -9,6 +9,16 @@ pipeline {
 
  stages{
 
+    stage('init') {
+    steps {
+        script {
+            echo "Current workspace: ${env.WORKSPACE}"
+            sh 'ls -la'
+            gv = load 'script.groovy'
+        }
+    }
+}
+
     stage('Build jar') {
         steps {
             script{
