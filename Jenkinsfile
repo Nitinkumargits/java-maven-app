@@ -19,6 +19,14 @@ pipeline {
     }
 }
 
+ stage('Checkout') {
+        steps {
+            script{
+                echo "checking out the code..."
+                checkout scm
+            }
+        }
+    }
     stage('Build jar') {
         steps {
             script{
