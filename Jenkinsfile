@@ -1,38 +1,40 @@
-def gv
+
 
 pipeline {
     agent any
-    stages {
-        stage("init") {
-            steps {
-                script {
-                    gv = load "script.groovy"
-                }
+    
+    tools {
+        maven "maven-3.6.0"
+    }
+    parameters {
+        choice(name: "VERSION", choices: ["1.0.0", "1.0.1", "1.0.2"], description: "Select version to deploy")
+        booleanParam(name: "executeTests", defaultValue: true, description: "Execute tests before deployment")
+    }
+
+ stages{
+    stage('Build') {
+        steps {
+            echo "Building version ${params.VERSION}"
+        
+        }
+    }
+    stage('Test') {
+        when {
+            expression {
+                params.executeTests
             }
         }
-        stage("build jar") {
-            steps {
-                script {
-                    echo "building jar"
-                    //gv.buildJar()
-                }
-            }
+        steps {
+            echo "Running tests for version ${params.VERSION}"
+        
         }
-        stage("build image") {
-            steps {
-                script {
-                    echo "building image"
-                    //gv.buildImage()
-                }
-            }
+    }
+    stage('Deploy') {
+        steps {
+            echo "Deploying the application"
+            echo "Deploying version ${params.VERSION}"
+        
         }
-        stage("deploy") {
-            steps {
-                script {
-                    echo "deploying"
-                    //gv.deployApp()
-                }
-            }
-        }
-    }   
+    }
+ }
 }
