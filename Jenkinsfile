@@ -76,21 +76,27 @@ pipeline {
                 echo "Deploying version ${env.IMAGE_NAME}"
             }
         }
-        stage('commit version update') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'Nitinkumargits', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                        // git config here for the first time run
-                        sh 'git config --global user.email "jenkins@example.com"'
-                        sh 'git config --global user.name "jenkins"'
+            stage('commit version update') {
+                    steps {
+                        script {
+                            withCredentials([usernamePassword(
+                                credentialsId: 'Nitinkumargits',
+                                passwordVariable: 'PASSWORD',
+                                usernameVariable: 'USERNAME'
+                            )]) {
 
-                        sh "git remote set-url origin https://${USERNAME}:${PASSWORD}@gitlab.com/${USERNAME}/java-maven-app.git"
-                        sh 'git add .'
-                        sh 'git commit -m "ci: version bump"'
-                        sh 'git push origin HEAD:jenkins-jobs'
+                                sh 'git config --global user.email "jenkins@example.com"'
+                                sh 'git config --global user.name "jenkins"'
+
+                                sh "git remote set-url origin https://${USERNAME}:${PASSWORD}@github.com/${USERNAME}/java-maven-app.git"
+
+                                sh 'git add pom.xml'
+                                sh 'git commit -m "ci: version bump" || echo "No changes to commit"'
+
+                                sh "git push origin HEAD:${env.BRANCH_NAME}"
+                            }
+                        }
                     }
-                }
-            }
         }
 
     }
