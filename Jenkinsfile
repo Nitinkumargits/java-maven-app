@@ -36,9 +36,9 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'nitinkdocker18', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
         
                 sh """
-                docker build -t nitinkdocker18/demo-app:3.0 .
+                docker build -t nitinkdocker18/java-maven-app:3.0 .
                 echo \$PASSWORD | docker login -u \$USERNAME --password-stdin
-                docker push nitinkdocker18/demo-app:3.0
+                docker push nitinkdocker18/java-maven-app:3.0
                 """
          
                 }
