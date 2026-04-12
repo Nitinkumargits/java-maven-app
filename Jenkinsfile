@@ -4,7 +4,7 @@ pipeline {
     agent any
     
     tools {
-        maven "maven-3.6.0"
+        maven "maven-3.6"
     }
     parameters {
         choice(name: "VERSION", choices: ["1.0.0", "1.0.1", "1.0.2"], description: "Select version to deploy")
